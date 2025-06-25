@@ -2,7 +2,6 @@ package claude.scene;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.dnt.fswf.manager.Manager;
@@ -15,7 +14,7 @@ import claude.core.Window;
 import claude.graphics.Camera2D;
 import claude.graphics.InstancedMesh;
 import claude.graphics.Renderer;
-import claude.graphics.TextRenderer;
+import claude.graphics.TextRendererOptimized;
 import claude.input.InputManager;
 import claude.input.KeyboardHandler;
 import claude.input.MouseHandler;
@@ -28,7 +27,7 @@ public class Scene {
     private InputManager inputManager;
     private Window window;
     //private SimpleTextRenderer textRenderer;  // Ajouter cette ligne
-    private TextRenderer textRenderer;  // Ajouter cette ligne
+    private TextRendererOptimized textRenderer;  // Ajouter cette ligne
     
     
     public Scene(InputManager inputManager, Window window) {
@@ -36,7 +35,7 @@ public class Scene {
         this.window = window;
         this.camera = new Camera2D();
         this.manager = new Manager();
-        this.textRenderer = new TextRenderer();  // Créer l'instance
+        this.textRenderer = new TextRendererOptimized();  // Créer l'instance
     }
     
     public void load() {
@@ -92,11 +91,19 @@ public class Scene {
         textRenderer.addText("petit", -100, -100, 1.0f, 1.0f, 1.0f, 1.0f, 0.5f);
         
         Random rnd = new Random();
-        for (int i = 0 ; i < 1000; i ++)
+        /*for (int i = 0 ; i < 100000; i ++)
         {
-        	float x = rnd.nextFloat()*500-250;
-        	float y = rnd.nextFloat()*500-250;
-        	textRenderer.addText("random", x,y, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+        	float x = rnd.nextFloat()*50000-25000;
+        	float y = rnd.nextFloat()*50000-25000;
+        	textRenderer.addText("random"+(int)(rnd.nextFloat()*655560), x,y, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+        }*/
+        
+        for (int x = 0 ; x < 1000; x ++)
+        {
+        	for (int y = 0 ; y < 1000; y ++)
+                {
+        	textRenderer.addText("random_"+x+"_"+y, x,y, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+        }
         }
         
         List<InstanceData> instances = new ArrayList<>();

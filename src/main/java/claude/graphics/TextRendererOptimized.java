@@ -99,7 +99,8 @@ public class TextRendererOptimized {
     private float fontHeight;
     
     // Buffers pour le batching
-    private static final int MAX_CHARACTERS = 10000; // Support jusqu'à 10k caractères
+    //private static final int MAX_CHARACTERS = 10000; // Support jusqu'à 10k caractères
+    private static final int MAX_CHARACTERS = 1000000; // Support jusqu'à 100000k caractères
     private FloatBuffer vertexBuffer;
     private IntBuffer indexBuffer;
     
@@ -146,9 +147,12 @@ public class TextRendererOptimized {
         }
         """;
     
+    
+    int maxCharSize = 15;
+    
     public TextRendererOptimized() {
         // Créer les buffers CPU
-    	vertexBuffer = BufferUtils.createFloatBuffer(MAX_CHARACTERS * 4 * 9); // 4 vertices * 9 floats
+    	vertexBuffer = BufferUtils.createFloatBuffer(MAX_CHARACTERS * 4 * maxCharSize); // 4 vertices * 9 floats
         indexBuffer = BufferUtils.createIntBuffer(MAX_CHARACTERS * 6); // 6 indices par quad
         
         // Créer le shader
@@ -171,7 +175,7 @@ public class TextRendererOptimized {
         
         // VBO avec taille maximale
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, MAX_CHARACTERS * 4 * 9 * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, MAX_CHARACTERS * 4 * maxCharSize * Float.BYTES, GL_DYNAMIC_DRAW);
         
         // EBO avec taille maximale
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
