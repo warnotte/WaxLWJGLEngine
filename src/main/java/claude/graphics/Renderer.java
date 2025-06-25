@@ -48,7 +48,7 @@ public class Renderer {
         shaderProgram.setUniform("view", camera.getViewMatrix());
         
         float time = (float)glfwGetTime();
-        modelMatrix.identity().rotate(time / 15, 0, 0, 1);
+        //modelMatrix.identity().rotate(time / 15, 0, 0, 1);
         shaderProgram.setUniform("modelmatrice", modelMatrix);
         
         // Autres uniforms

@@ -3,6 +3,9 @@ package claude.graphics;
 import static org.lwjgl.opengl.GL20.*;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -11,16 +14,22 @@ import java.util.Map;
 public class ShaderProgram {
     private final int programId;
     private final Map<String, Integer> uniforms;
+    private Shader vertexShader;
+    private Shader fragmentShader;
     
     public ShaderProgram(String vertexSource, String fragmentSource) {
         programId = glCreateProgram();
         uniforms = new HashMap<>();
         
-        int vertexShader = createShader(GL_VERTEX_SHADER, vertexSource);
-        int fragmentShader = createShader(GL_FRAGMENT_SHADER, fragmentSource);
+        // Utiliser la classe Shader
+        vertexShader = new Shader(GL_VERTEX_SHADER, vertexSource);
+        fragmentShader = new Shader(GL_FRAGMENT_SHADER, fragmentSource);
         
-        glAttachShader(programId, vertexShader);
-        glAttachShader(programId, fragmentShader);
+        // Attacher les shaders
+        glAttachShader(programId, vertexShader.getId());
+        glAttachShader(programId, fragmentShader.getId());
+        
+        // Lier le programme
         glLinkProgram(programId);
         
         if (glGetProgrami(programId, GL_LINK_STATUS) == GL_FALSE) {
@@ -28,21 +37,13 @@ public class ShaderProgram {
                 glGetProgramInfoLog(programId));
         }
         
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-    }
-    
-    private int createShader(int type, String source) {
-        int shader = glCreateShader(type);
-        glShaderSource(shader, source);
-        glCompileShader(shader);
+        // Détacher les shaders après le linking
+        glDetachShader(programId, vertexShader.getId());
+        glDetachShader(programId, fragmentShader.getId());
         
-        if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE) {
-            throw new RuntimeException("Shader compilation failed: " + 
-                glGetShaderInfoLog(shader));
-        }
-        
-        return shader;
+        // Nettoyer les shaders (ils ne sont plus nécessaires après le linking)
+        vertexShader.cleanup();
+        fragmentShader.cleanup();
     }
     
     public void createUniform(String uniformName) {
@@ -63,6 +64,34 @@ public class ShaderProgram {
     
     public void setUniform(String uniformName, float value) {
         glUniform1f(uniforms.get(uniformName), value);
+    }
+    
+    public void setUniform(String uniformName, int value) {
+        glUniform1i(uniforms.get(uniformName), value);
+    }
+    
+    public void setUniform(String uniformName, float x, float y) {
+        glUniform2f(uniforms.get(uniformName), x, y);
+    }
+    
+    public void setUniform(String uniformName, float x, float y, float z) {
+        glUniform3f(uniforms.get(uniformName), x, y, z);
+    }
+    
+    public void setUniform(String uniformName, float x, float y, float z, float w) {
+        glUniform4f(uniforms.get(uniformName), x, y, z, w);
+    }
+    
+    public void setUniform(String uniformName, Vector2f value) {
+        glUniform2f(uniforms.get(uniformName), value.x, value.y);
+    }
+    
+    public void setUniform(String uniformName, Vector3f value) {
+        glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
+    }
+    
+    public void setUniform(String uniformName, Vector4f value) {
+        glUniform4f(uniforms.get(uniformName), value.x, value.y, value.z, value.w);
     }
     
     public void bind() {

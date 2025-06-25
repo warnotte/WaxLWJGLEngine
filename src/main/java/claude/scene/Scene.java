@@ -2,6 +2,7 @@ package claude.scene;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.dnt.fswf.manager.Manager;
@@ -9,12 +10,12 @@ import org.dnt.fswf.model.Flotteur;
 import org.dnt.fswf.model.Ilot;
 import org.dnt.fswf.model.PanneauSolaire;
 import org.joml.Random;
-import org.joml.Vector2f;
 
 import claude.core.Window;
 import claude.graphics.Camera2D;
 import claude.graphics.InstancedMesh;
 import claude.graphics.Renderer;
+import claude.graphics.TextRenderer;
 import claude.input.InputManager;
 import claude.input.KeyboardHandler;
 import claude.input.MouseHandler;
@@ -26,12 +27,16 @@ public class Scene {
     private int ilotId = 2;
     private InputManager inputManager;
     private Window window;
+    //private SimpleTextRenderer textRenderer;  // Ajouter cette ligne
+    private TextRenderer textRenderer;  // Ajouter cette ligne
+    
     
     public Scene(InputManager inputManager, Window window) {
         this.inputManager = inputManager;
         this.window = window;
         this.camera = new Camera2D();
         this.manager = new Manager();
+        this.textRenderer = new TextRenderer();  // Créer l'instance
     }
     
     public void load() {
@@ -68,6 +73,32 @@ public class Scene {
     }
     
     private List<InstanceData> createInstanceData() {
+    	
+    	   // Texte simple blanc
+        textRenderer.addText("Centre (0,0)", 0, 0);
+        
+        // Texte coloré
+        textRenderer.addText("Rouge", 50, 50, 1.0f, 0.0f, 0.0f);
+        textRenderer.addText("Vert", -50, 50, 0.0f, 1.0f, 0.0f);
+        textRenderer.addText("Bleu", 0, -50, 0.0f, 0.0f, 1.0f);
+        
+        // Texte avec transparence
+        textRenderer.addText("Semi-transparent", 100, 0, 1.0f, 1.0f, 1.0f, 0.5f, 1.0f);
+        
+        // Texte plus grand
+        textRenderer.addText("GRAND", -100, 100, 1.0f, 1.0f, 0.0f, 1.0f, 2.0f);
+        
+        // Texte plus petit
+        textRenderer.addText("petit", -100, -100, 1.0f, 1.0f, 1.0f, 1.0f, 0.5f);
+        
+        Random rnd = new Random();
+        for (int i = 0 ; i < 1000; i ++)
+        {
+        	float x = rnd.nextFloat()*500-250;
+        	float y = rnd.nextFloat()*500-250;
+        	textRenderer.addText("random", x,y, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+        }
+        
         List<InstanceData> instances = new ArrayList<>();
         Ilot ilot = manager.getModel().getIlotById(ilotId);
         Random random = new Random();
@@ -141,6 +172,7 @@ public class Scene {
                 }*/
             }
         }
+
         
         return instances;
     }
@@ -207,7 +239,7 @@ public class Scene {
             camera.setZoom(1.0f);
             System.out.println("[SCENE] Camera reset");
         }
-        
+        /*
         // Drag souris
         if (mouse.isDragging()) {
             double deltaX = mouse.getDeltaX();
@@ -219,6 +251,26 @@ public class Scene {
                 float dy = (float)(deltaY * 0.1f / camera.getZoom());
                 camera.move(-dx, dy);
                 System.out.println("[SCENE] Camera moved by: " + (-dx) + ", " + dy);
+            }
+        }*/
+        
+        
+        // Drag souris
+        if (mouse.isDragging()) {
+            double deltaX = mouse.getDeltaX();
+            double deltaY = mouse.getDeltaY();
+            
+            if (deltaX != 0 || deltaY != 0) {
+                // Convertir le déplacement en pixels en déplacement dans le monde
+                float aspect = (float)window.getWidth() / (float)window.getHeight();
+                float scale = 100.0f / camera.getZoom();
+                
+                // Conversion du déplacement pixel vers unités monde
+                float worldDeltaX = (float)deltaX / window.getWidth() * 2.0f * aspect * scale;
+                float worldDeltaY = (float)deltaY / window.getHeight() * 2.0f * scale;
+                
+                // Déplacer la caméra (inversé pour que le monde suive la souris)
+                camera.move(-worldDeltaX, worldDeltaY);
             }
         }
         
@@ -262,11 +314,16 @@ public class Scene {
     
     public void render(Renderer renderer) {
         renderer.render(mesh, camera);
+        textRenderer.render(camera, window);  // Ajouter cette ligne
+        
     }
     
     public void cleanup() {
         if (mesh != null) {
             mesh.cleanup();
+        }
+        if (textRenderer != null) {
+            textRenderer.cleanup();  // Ajouter cette ligne
         }
     }
 }
