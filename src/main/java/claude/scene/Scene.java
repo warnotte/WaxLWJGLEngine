@@ -9,12 +9,13 @@ import org.dnt.fswf.model.Flotteur;
 import org.dnt.fswf.model.Ilot;
 import org.dnt.fswf.model.PanneauSolaire;
 import org.joml.Random;
+import org.joml.Vector2f;
 
 import claude.core.Window;
 import claude.graphics.Camera2D;
 import claude.graphics.InstancedMesh;
 import claude.graphics.Renderer;
-import claude.graphics.TextRendererOptimized;
+import claude.graphics.TextRendererImproved;
 import claude.input.InputManager;
 import claude.input.KeyboardHandler;
 import claude.input.MouseHandler;
@@ -27,7 +28,9 @@ public class Scene {
     private InputManager inputManager;
     private Window window;
     //private SimpleTextRenderer textRenderer;  // Ajouter cette ligne
-    private TextRendererOptimized textRenderer;  // Ajouter cette ligne
+    //private TextRendererOptimized textRenderer;  // Ajouter cette ligne
+    private TextRendererImproved textRenderer;  // Ajouter cette ligne
+    
     
     
     public Scene(InputManager inputManager, Window window) {
@@ -35,7 +38,7 @@ public class Scene {
         this.window = window;
         this.camera = new Camera2D();
         this.manager = new Manager();
-        this.textRenderer = new TextRendererOptimized();  // Créer l'instance
+        this.textRenderer = new TextRendererImproved();  // Créer l'instance
     }
     
     public void load() {
@@ -77,34 +80,39 @@ public class Scene {
         textRenderer.addText("Centre (0,0)", 0, 0);
         
         // Texte coloré
-        textRenderer.addText("Rouge", 50, 50, 1.0f, 0.0f, 0.0f);
-        textRenderer.addText("Vert", -50, 50, 0.0f, 1.0f, 0.0f);
-        textRenderer.addText("Bleu", 0, -50, 0.0f, 0.0f, 1.0f);
+        textRenderer.addText("Rouge", 50, 50, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+        textRenderer.addText("Vert", -50, 50, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f);
+        textRenderer.addText("Bleu", 0, -50, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
         
         // Texte avec transparence
-        textRenderer.addText("Semi-transparent", 100, 0, 1.0f, 1.0f, 1.0f, 0.5f, 1.0f);
+        textRenderer.addText("Semi-transparent", 100, 0, 0.5f, 0.0f, 1.0f, 0.5f, 1.0f);
         
         // Texte plus grand
-        textRenderer.addText("GRAND", -100, 100, 1.0f, 1.0f, 0.0f, 1.0f, 2.0f);
+        textRenderer.addText("GRAND", -100, 100, 1.0f, 0.0f, 1.0f, 1.0f, 2.0f);
+        
+        // Texte plus normal (scale = 1)
+        textRenderer.addText("Petit", -100, 75, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f);
         
         // Texte plus petit
-        textRenderer.addText("petit", -100, -100, 1.0f, 1.0f, 1.0f, 1.0f, 0.5f);
+        textRenderer.addText("Petit", -100, 50, 1.0f, 0.0f, 1.0f, 1.0f, 0.5f);
+       
+        // Texte encore plus petit
+        textRenderer.addText("Petit", -100, 25, 1.0f, 0.0f, 1.0f, 1.0f, 0.25f);
         
+     // Texte avec fond
+        textRenderer.addTextWithBackground("Important", -25, -25, 
+            1.0f, 1.0f, 1.0f, 1.0f,  // Texte blanc
+            0.0f, 0.0f, 0.0f, 0.7f); // Fond noir semi-transparent
+        
+        /*
         Random rnd = new Random();
-        /*for (int i = 0 ; i < 100000; i ++)
+        for (int i = 0 ; i < 10000; i ++)
         {
-        	float x = rnd.nextFloat()*50000-25000;
-        	float y = rnd.nextFloat()*50000-25000;
-        	textRenderer.addText("random"+(int)(rnd.nextFloat()*655560), x,y, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-        }*/
-        
-        for (int x = 0 ; x < 1000; x ++)
-        {
-        	for (int y = 0 ; y < 1000; y ++)
-                {
-        	textRenderer.addText("random_"+x+"_"+y, x,y, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+        	float x = rnd.nextFloat()*5000-2500;
+        	float y = rnd.nextFloat()*5000-2500;
+        	textRenderer.addText("DEMO_"+(int)(rnd.nextFloat()*655560), x,y, 0.0f, 0.0f, 0.0f, 1.0f, 1f);
         }
-        }
+        */
         
         List<InstanceData> instances = new ArrayList<>();
         Ilot ilot = manager.getModel().getIlotById(ilotId);
@@ -210,6 +218,8 @@ public class Scene {
         // Mise à jour des matrices de la caméra
         camera.updateProjectionMatrix(window.getWidth(), window.getHeight());
         camera.updateViewMatrix();
+        
+        debugMousePosition();
     }
     
     private void handleCameraInput(float deltaTime) {
@@ -332,5 +342,37 @@ public class Scene {
         if (textRenderer != null) {
             textRenderer.cleanup();  // Ajouter cette ligne
         }
+        
     }
+    
+ // Dans Scene.java, ajoutez cette méthode :
+    private void debugMousePosition() {
+        MouseHandler mouse = inputManager.getMouse();
+        
+        // Position souris en coordonnées monde
+        Vector2f worldPos =camera.screenToWorld(
+            (float)mouse.getX(), 
+            (float)mouse.getY(), 
+            window.getWidth(), window.getHeight()
+           // camera.getZoom()
+        );
+        
+        // Afficher dans le titre de la fenêtre ou en console
+        String info = String.format("Mouse: Screen(%.0f, %.0f) World(%.1f, %.1f) Zoom: %.2f", 
+            mouse.getX(), mouse.getY(), worldPos.x, worldPos.y, camera.getZoom());
+        System.err.println(info);
+        
+        // Option 1 : Dans le titre de la fenêtre
+        //window.setTitle("LWJGL - " + info);
+        
+        // Option 2 : Afficher comme texte dans la scène
+        //textRenderer.clearTexts();
+        //textRenderer.addText(info, worldPos.x + 10, worldPos.y + 10, 
+        //                    1.0f, 1.0f, 0.0f, 1.0f, 0.8f);
+        
+        // Ajouter vos autres textes ici...
+        //addTestLabels();
+    }
+
+    
 }

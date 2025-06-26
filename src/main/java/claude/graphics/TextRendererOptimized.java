@@ -48,6 +48,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -55,6 +56,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
 
@@ -147,12 +150,9 @@ public class TextRendererOptimized {
         }
         """;
     
-    
-    int maxCharSize = 15;
-    
     public TextRendererOptimized() {
         // Créer les buffers CPU
-    	vertexBuffer = BufferUtils.createFloatBuffer(MAX_CHARACTERS * 4 * maxCharSize); // 4 vertices * 9 floats
+    	vertexBuffer = BufferUtils.createFloatBuffer(MAX_CHARACTERS * 4 * 11); // 4 vertices * 11 floats
         indexBuffer = BufferUtils.createIntBuffer(MAX_CHARACTERS * 6); // 6 indices par quad
         
         // Créer le shader
@@ -175,7 +175,7 @@ public class TextRendererOptimized {
         
         // VBO avec taille maximale
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, MAX_CHARACTERS * 4 * maxCharSize * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, MAX_CHARACTERS * 4 * 11 * Float.BYTES, GL_DYNAMIC_DRAW);
         
         // EBO avec taille maximale
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -224,7 +224,7 @@ public class TextRendererOptimized {
         int x = 0;
         int y = 0;
         int rowHeight = 0;
-        
+              
         for (char c = 32; c < 127; c++) {
             int charWidth = metrics.charWidth(c);
             int charHeight = metrics.getHeight();
@@ -253,6 +253,13 @@ public class TextRendererOptimized {
         }
         
         g2d.dispose();
+        
+        try {
+			ImageIO.write(atlas, "png", new java.io.File("font.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         createTextureFromImage(atlas);
     }
     
@@ -370,10 +377,12 @@ public class TextRendererOptimized {
             }
         }
         
-        if (charCount == 0) return;
+ if (charCount == 0) return;
         
         vertexBuffer.flip();
         indexBuffer.flip();
+        
+        
         
         // Configuration du rendu
         boolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
