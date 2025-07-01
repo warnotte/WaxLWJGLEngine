@@ -30,7 +30,7 @@ public class MouseHandler {
             previousX = xpos;
             previousY = ypos;
             firstMouse = false;
-            System.out.println("[MOUSE] First mouse position: " + xpos + ", " + ypos);
+       //     System.out.println("[MOUSE] First mouse position: " + xpos + ", " + ypos);
         }
         
         x = xpos;
@@ -40,7 +40,7 @@ public class MouseHandler {
             double dx = x - previousX;
             double dy = y - previousY;
             if (dx != 0 || dy != 0) {
-                System.out.println("[MOUSE] Dragging - Delta: " + dx + ", " + dy);
+       //         System.out.println("[MOUSE] Dragging - Delta: " + dx + ", " + dy);
             }
         }
     }
@@ -56,7 +56,7 @@ public class MouseHandler {
                 isDragging = true;
                 previousX = x;
                 previousY = y;
-                System.out.println("[MOUSE] Left button pressed at: " + x + ", " + y);
+              // System.out.println("[MOUSE] Left button pressed at: " + x + ", " + y);
             }
         } else if (action == GLFW_RELEASE) {
             buttons[button] = false;
@@ -64,7 +64,7 @@ public class MouseHandler {
             
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 isDragging = false;
-                System.out.println("[MOUSE] Left button released");
+             //   System.out.println("[MOUSE] Left button released");
             }
         }
     }
@@ -73,7 +73,7 @@ public class MouseHandler {
         scrollX = xoffset;
         scrollY = yoffset;
         if (yoffset != 0) {
-            System.out.println("[MOUSE] Scroll: " + yoffset);
+         //   System.out.println("[MOUSE] Scroll: " + yoffset);
         }
     }
     
@@ -82,7 +82,7 @@ public class MouseHandler {
         
         // Debug toutes les 60 frames si on drag
         if (frameCount % 60 == 0 && isDragging) {
-            System.out.println("[MOUSE] Frame " + frameCount + " - Still dragging, pos: " + x + ", " + y);
+        //    System.out.println("[MOUSE] Frame " + frameCount + " - Still dragging, pos: " + x + ", " + y);
         }
         
         // Réinitialiser les états pressed/released

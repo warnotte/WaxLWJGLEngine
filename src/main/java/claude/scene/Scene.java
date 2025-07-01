@@ -358,9 +358,9 @@ public class Scene {
         );
         
         // Afficher dans le titre de la fenêtre ou en console
-        String info = String.format("Mouse: Screen(%.0f, %.0f) World(%.1f, %.1f) Zoom: %.2f", 
-            mouse.getX(), mouse.getY(), worldPos.x, worldPos.y, camera.getZoom());
-        System.err.println(info);
+       // String info = String.format("Mouse: Screen(%.0f, %.0f) World(%.1f, %.1f) Zoom: %.2f", 
+        //    mouse.getX(), mouse.getY(), worldPos.x, worldPos.y, camera.getZoom());
+        //System.err.println(info);
         
         // Option 1 : Dans le titre de la fenêtre
         //window.setTitle("LWJGL - " + info);

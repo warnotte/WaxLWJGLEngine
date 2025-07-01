@@ -20,8 +20,10 @@ public class Renderer {
     
     public void init() {
         // Charger les shaders
-        String vertexShader = ResourceLoader.loadShader("vertex.vert");
-        String fragmentShader = ResourceLoader.loadShader("fragment.frag");
+    	//String vertexShader = ResourceLoader.loadShader("vertex.vert");
+        //String fragmentShader = ResourceLoader.loadShader("fragment.frag");
+        String vertexShader = ResourceLoader.loadShader("Datas/shaders/vertex.vert");
+        String fragmentShader = ResourceLoader.loadShader("Datas/shaders/fragment.frag");
         
         shaderProgram = new ShaderProgram(vertexShader, fragmentShader);
         
@@ -29,7 +31,7 @@ public class Renderer {
         shaderProgram.createUniform("projection");
         shaderProgram.createUniform("view");
         shaderProgram.createUniform("modelmatrice");
-        shaderProgram.createUniform("time");
+        //shaderProgram.createUniform("time");
         shaderProgram.createUniform("uBorderPx");
         
         // Configuration OpenGL
@@ -52,8 +54,8 @@ public class Renderer {
         shaderProgram.setUniform("modelmatrice", modelMatrix);
         
         // Autres uniforms
-        shaderProgram.setUniform("time", time);
-        shaderProgram.setUniform("uBorderPx", 0.5f);
+        //shaderProgram.setUniform("time", time);
+        shaderProgram.setUniform("uBorderPx", 1.0f);
         
         // Rendu du mesh
         mesh.render();

@@ -10,7 +10,7 @@ layout (location = 6) in vec3 aInstanceColor;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 modelmatrice;
-uniform float time;
+//uniform float time;
 
 out vec3 fragColor;
 out vec2 uv;
@@ -37,8 +37,10 @@ void main() {
     );
     
     // Animation optionnelle (commentée)
-    finalPos.x += 0.1*cos(time*finalPos.y/50);
-    finalPos.y += 0.1*sin(time*finalPos.x/50);
+    //finalPos.x += 0.0*cos(time*finalPos.y/50);
+    //finalPos.y += 0.0*sin(time*finalPos.x/50);
+    //finalPos.x += 0.1*(time*finalPos.y/50);
+    //finalPos.y += 0.1*(time*finalPos.x/50);
     
     // Position finale avec zDepth pour le depth testing
     gl_Position = projection * view * modelmatrice * vec4(finalPos.x, finalPos.y, finalPos.z/* + zDepth*/, 1.0);
